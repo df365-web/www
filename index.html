@@ -1,0 +1,334 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="color-scheme" content="light dark"/>
+<title>DF365</title>
+
+<style>
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+
+:root{
+  --bg-base-light:#eef3f8;
+  --bg-base-dark:#0b0f15;
+  --bg-accent1:rgba(80,150,255,.18);
+  --bg-accent2:rgba(255,120,180,.15);
+  --noise-opacity:.14;
+
+  --g1:#62A4FF;
+  --g2:#2F5DFF;
+
+  --txtShadow:
+    0px 1px 0px rgba(0,0,0,.30),
+    0px 2px 2px rgba(0,0,0,.22),
+    0px 4px 6px rgba(0,0,0,.18);
+
+  --txtShadowHover:
+    0px 2px 1px rgba(0,0,0,.36),
+    0px 3px 4px rgba(0,0,0,.28),
+    0px 6px 10px rgba(0,0,0,.22);
+
+  --shadowCurrent:var(--txtShadow);
+
+  --alertRed:#FF0000;
+}
+
+@media(prefers-color-scheme:dark){
+  :root{--alertRed:#FF1A1A}
+}
+
+body{
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+  background:
+    radial-gradient(circle at 40% 30%,var(--bg-accent1),transparent 60%),
+    radial-gradient(circle at 70% 70%,var(--bg-accent2),transparent 65%),
+    var(--bg-base-light)
+}
+
+body::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  backdrop-filter:blur(28px) saturate(140%);
+  -webkit-backdrop-filter:blur(28px) saturate(140%);
+  pointer-events:none;
+  z-index:-2;
+}
+
+body::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='5' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.25'/></svg>");
+  background-size:240px;
+  opacity:var(--noise-opacity);
+  pointer-events:none;
+  mix-blend-mode:soft-light;
+  z-index:-1;
+}
+
+@media(prefers-color-scheme:dark){
+  body{
+    background:
+      radial-gradient(circle at 40% 30%,rgba(40,80,150,.22),transparent 60%),
+      radial-gradient(circle at 70% 70%,rgba(180,60,120,.18),transparent 65%),
+      var(--bg-base-dark);
+  }
+}
+
+html,body{
+  user-select:none;
+  -webkit-user-select:none;
+}
+input,textarea,[contenteditable="true"]{
+  user-select:text!important;
+}
+
+.container{
+  position:relative;
+  z-index:10;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  pointer-events:none;
+}
+
+#wordmark,#dismissBtn{
+  pointer-events:auto;
+  cursor:pointer;
+}
+
+.wordmark{
+  position:relative;
+  isolation:isolate;
+  filter:drop-shadow(0 22px 80px rgba(0,0,0,.18));
+  line-height:1;
+}
+
+.wordmark .mark{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  font-weight:900;
+  font-size:clamp(70px,15vmin,210px);
+  letter-spacing:.07em;
+  display:inline-block;
+  transition:text-shadow .3s ease-out;
+}
+
+/* DF: blue gradient */
+.df{
+  background:linear-gradient(180deg,var(--g1),var(--g2));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+  text-shadow:var(--shadowCurrent);
+}
+
+/* 365: bright white gradient (Option A) */
+.n365{
+  background:linear-gradient(180deg,#ffffff,#f6f7f8);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-fill-color:transparent;
+
+  text-shadow:
+    0px 1px 0px rgba(0,0,0,0.10),
+    0px 2px 3px rgba(0,0,0,0.08),
+    0px 3px 6px rgba(0,0,0,0.06);
+}
+
+.wordmark:hover{
+  --shadowCurrent:var(--txtShadowHover);
+}
+
+.wordmark.glow-burst{
+  --shadowCurrent:var(--txtShadowHover);
+}
+
+.wordmark.is-red{
+  --g1:var(--alertRed);
+  --g2:var(--alertRed);
+
+  --txtShadow:
+    0px 1px 0px rgba(255,0,0,.38),
+    0px 2px 2px rgba(255,0,0,.28),
+    0px 4px 6px rgba(255,0,0,.22);
+
+  --txtShadowHover:
+    0px 2px 1px rgba(255,0,0,.45),
+    0px 3px 4px rgba(255,0,0,.32),
+    0px 6px 10px rgba(255,0,0,.30);
+
+  --shadowCurrent:var(--txtShadow);
+}
+
+.wordmark.is-red .df,
+.wordmark.is-red .n365{
+  background:linear-gradient(180deg,var(--alertRed),var(--alertRed));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.status-wrap{
+  opacity:0;
+  transform:translateY(-4px);
+  transition:opacity .3s ease,transform .3s ease;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.wordmark.is-red~.status-wrap{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.status-text{
+  font-family:system-ui,sans-serif;
+  font-weight:600;
+  font-size:clamp(14px,2.5vmin,18px);
+  color:var(--alertRed);
+}
+
+.dismiss-icon{
+  --size:28px;
+  width:var(--size);
+  height:var(--size);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:50%;
+  border:1px solid var(--alertRed);
+  background:color-mix(in oklab,var(--alertRed) 7%,transparent);
+  color:var(--alertRed);
+  padding:0;
+  transition:background .2s ease,transform .08s ease;
+}
+
+#dismissBtn:hover{
+  background:color-mix(in oklab,var(--alertRed) 16%,transparent);
+}
+#dismissBtn:active{
+  transform:translateY(1px);
+}
+
+.dismiss-icon svg{
+  width:14px;
+  height:14px;
+  display:block;
+}
+
+@keyframes shake-soft{
+  0%{transform:translateX(0) scale(1)}
+  8%{transform:translateX(-4px) scale(.998)}
+  16%{transform:translateX(4px) scale(.999)}
+  24%{transform:translateX(-3px) scale(1.0005)}
+  32%{transform:translateX(3px) scale(.9995)}
+  40%{transform:translateX(-2.2px) scale(1)}
+  48%{transform:translateX(2.2px) scale(1)}
+  56%{transform:translateX(-1.6px) scale(1)}
+  64%{transform:translateX(1.6px) scale(1)}
+  72%{transform:translateX(-1px) scale(1)}
+  80%{transform:translateX(1px) scale(1)}
+  88%{transform:translateX(-.6px) scale(1)}
+  100%{transform:translateX(0) scale(1)}
+}
+.shake-on-appear{
+  animation:shake-soft 520ms cubic-bezier(.22,.61,.36,1);
+}
+
+@media(prefers-reduced-motion:reduce){
+  .shake-on-appear{animation:none!important}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<main id="wordmark" class="wordmark" role="button" tabindex="0">
+  <span class="mark df">DF</span><span class="mark n365">365</span>
+</main>
+
+<div class="status-wrap" id="statusWrap">
+  <span class="status-text">Error: Access Denied</span>
+  <button class="dismiss-icon" id="dismissBtn" type="button">
+    <svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3L3 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+</div>
+
+<script>
+(function(){
+  const wm=document.getElementById("wordmark");
+  const dismiss=document.getElementById("dismissBtn");
+  const status=document.getElementById("statusWrap");
+
+  let clicks=0;
+  let locked=false;
+  let timer;
+
+  function burst(){
+    wm.classList.add("glow-burst");
+    clearTimeout(timer);
+    timer=setTimeout(()=>wm.classList.remove("glow-burst"),260);
+  }
+
+  function shake(el){
+    el.classList.remove("shake-on-appear");
+    void el.offsetWidth;
+    el.classList.add("shake-on-appear");
+  }
+
+  function goRed(){
+    wm.classList.add("is-red");
+    clearTimeout(timer);
+    wm.classList.remove("glow-burst");
+    locked=true;
+    shake(status);
+    shake(dismiss);
+    dismiss.focus({preventScroll:true});
+  }
+
+  function reset(){
+    wm.classList.remove("is-red","glow-burst");
+    clicks=0;
+    locked=false;
+    status.classList.remove("shake-on-appear");
+    dismiss.classList.remove("shake-on-appear");
+    wm.focus({preventScroll:true});
+  }
+
+  wm.addEventListener("click",()=>{
+    if(locked)return;
+    clicks++;
+    clicks>=2?goRed():burst();
+  });
+
+  wm.addEventListener("keydown",e=>{
+    if(e.key==="Enter"||e.key===" "){
+      e.preventDefault();
+      wm.click();
+    }
+  });
+
+  dismiss.addEventListener("click",reset);
+})();
+</script>
+
+</body>
+</html>
