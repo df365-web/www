@@ -4,18 +4,17 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<meta name="color-scheme" content="light dark"/>
 <title>DF365</title>
 
 <style>
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 
+/* Dark-only theme */
 :root{
-  --bg-base-light:#eef3f8;
   --bg-base-dark:#0b0f15;
-  --bg-accent1:rgba(80,150,255,.18);
-  --bg-accent2:rgba(255,120,180,.15);
+  --bg-accent1:rgba(40,80,150,.22);
+  --bg-accent2:rgba(180,60,120,.18);
   --noise-opacity:.14;
 
   --g1:#62A4FF;
@@ -33,11 +32,7 @@ html,body{height:100%;margin:0}
 
   --shadowCurrent:var(--txtShadow);
 
-  --alertRed:#FF0000;
-}
-
-@media(prefers-color-scheme:dark){
-  :root{--alertRed:#FF1A1A}
+  --alertRed:#FF1A1A;
 }
 
 body{
@@ -50,7 +45,7 @@ body{
   background:
     radial-gradient(circle at 40% 30%,var(--bg-accent1),transparent 60%),
     radial-gradient(circle at 70% 70%,var(--bg-accent2),transparent 65%),
-    var(--bg-base-light)
+    var(--bg-base-dark);
 }
 
 body::before{
@@ -63,6 +58,10 @@ body::before{
   z-index:-2;
 }
 
+@supports not ((backdrop-filter: blur(28px)) or (-webkit-backdrop-filter: blur(28px))){
+  body::before{ background: rgba(0,0,0,.35); }
+}
+
 body::after{
   content:"";
   position:absolute;
@@ -73,15 +72,6 @@ body::after{
   pointer-events:none;
   mix-blend-mode:soft-light;
   z-index:-1;
-}
-
-@media(prefers-color-scheme:dark){
-  body{
-    background:
-      radial-gradient(circle at 40% 30%,rgba(40,80,150,.22),transparent 60%),
-      radial-gradient(circle at 70% 70%,rgba(180,60,120,.18),transparent 65%),
-      var(--bg-base-dark);
-  }
 }
 
 html,body{
@@ -124,7 +114,7 @@ input,textarea,[contenteditable="true"]{
   transition:text-shadow .3s ease-out;
 }
 
-/* DF: blue gradient */
+/* DF gradient */
 .df{
   background:linear-gradient(180deg,var(--g1),var(--g2));
   -webkit-background-clip:text;
@@ -134,14 +124,13 @@ input,textarea,[contenteditable="true"]{
   text-shadow:var(--shadowCurrent);
 }
 
-/* 365: bright white gradient (Option A) */
+/* 365 gradient */
 .n365{
   background:linear-gradient(180deg,#ffffff,#f6f7f8);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
   -webkit-text-fill-color:transparent;
-
   text-shadow:
     0px 1px 0px rgba(0,0,0,0.10),
     0px 2px 3px rgba(0,0,0,0.08),
@@ -156,6 +145,7 @@ input,textarea,[contenteditable="true"]{
   --shadowCurrent:var(--txtShadowHover);
 }
 
+/* Red mode */
 .wordmark.is-red{
   --g1:var(--alertRed);
   --g2:var(--alertRed);
@@ -202,8 +192,9 @@ input,textarea,[contenteditable="true"]{
   color:var(--alertRed);
 }
 
+/* 50% smaller dismiss button */
 .dismiss-icon{
-  --size:28px;
+  --size:22px; /* was 44px → now 50% smaller */
   width:var(--size);
   height:var(--size);
   display:flex;
@@ -211,23 +202,24 @@ input,textarea,[contenteditable="true"]{
   align-items:center;
   border-radius:50%;
   border:1px solid var(--alertRed);
-  background:color-mix(in oklab,var(--alertRed) 7%,transparent);
+  background: rgba(255,0,0,.10);
+  background: color-mix(in oklab,var(--alertRed) 12%,transparent);
   color:var(--alertRed);
   padding:0;
   transition:background .2s ease,transform .08s ease;
 }
 
+.dismiss-icon svg{
+  width:10px; /* scaled down from 14px */
+  height:10px;
+}
+
 #dismissBtn:hover{
-  background:color-mix(in oklab,var(--alertRed) 16%,transparent);
+  background: rgba(255,0,0,.18);
+  background: color-mix(in oklab,var(--alertRed) 18%,transparent);
 }
 #dismissBtn:active{
   transform:translateY(1px);
-}
-
-.dismiss-icon svg{
-  width:14px;
-  height:14px;
-  display:block;
 }
 
 @keyframes shake-soft{
@@ -265,7 +257,7 @@ input,textarea,[contenteditable="true"]{
 
 <div class="status-wrap" id="statusWrap">
   <span class="status-text">Error: Access Denied</span>
-  <button class="dismiss-icon" id="dismissBtn" type="button">
+  <button class="dismiss-icon" id="dismissBtn" type="button" aria-label="Dismiss error">
     <svg viewBox="0 0 12 12"><path d="M3 3l6 6M9 3L3 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
   </button>
 </div>
@@ -332,5 +324,3 @@ input,textarea,[contenteditable="true"]{
 
 </body>
 </html>
-
-
